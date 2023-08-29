@@ -37,6 +37,11 @@ extern "C" int test(void* base){
     LOG_INFOS(" pVuAssetFactory %p", pVuAssetFactory);
 
     LOG_HEXDUMP(pVuAssetFactory, 0x190);
+
+    auto*  vuAssetDB = pVuAssetFactory->_vuAssetDB;
+    LOG_HEXDUMP(vuAssetDB, 0xe0);
+
+
     return -1;
 
     auto& assetFactories  = pVuAssetFactory->_assetFactories;
@@ -44,9 +49,6 @@ extern "C" int test(void* base){
     for(auto it=assetFactories.begin(); it!=assetFactories.end(); ++it){
         LOG_INFOS(" %s", it->first.c_str());
     }
-
-    auto*  vuAssetDB = pVuAssetFactory->_vuAssetDB;
-    LOG_HEXDUMP(vuAssetDB, 0x40);
 
 //      auto& _mem = vuAssetDB->_assetInfoHashes;
 //      LOG_INFOS(" member size %ld", _mem.size());

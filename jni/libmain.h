@@ -16,6 +16,10 @@ struct VuAsset
 {
 };
 
+struct VuAssetPackFileReader{
+    unsigned char _0x0[0x38 ];
+};
+
 // size 0xe0
 struct VuAssetDB{
     unsigned char _0x0[0x40 ];
@@ -24,7 +28,12 @@ struct VuAssetDB{
 #else
     unsigned char _assets[0x18];
 #endif
-    unsigned char _0x68[0x78 ];
+
+    unsigned char _0x58[0x18 ];
+
+    VuAssetPackFileReader _vuAssetPackFileReader0; // 0x70
+    VuAssetPackFileReader _vuAssetPackFileReader1; // 0xa8
+
 };
 
 // size 0x190

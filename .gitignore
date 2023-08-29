@@ -1,4 +1,6 @@
 
+.exrc
+.venv
 __pycached__
 .env
 _agent.js
