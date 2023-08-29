@@ -5,3 +5,9 @@ tt.sh
 tt.py
 tt.js
 node_modules/
+
+modinfos/lib*.ts
+
+obj
+libs
+bins
