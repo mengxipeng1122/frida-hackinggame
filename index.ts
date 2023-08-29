@@ -2,11 +2,11 @@
 
 import {mod as libmosebotinfo} from './modinfos/libmousebot'
 
-const _frida_log_callback =  new NativeCallback(function(sp:NativePointer){
+const _frida_log =  new NativeCallback(function(sp:NativePointer){
     console.log(sp.readUtf8String());
 }, 'void', ['pointer']);
 
-const _frida_hexdump_callback =  new NativeCallback(function(sp:NativePointer, sz:number){
+const _frida_hexdump =  new NativeCallback(function(sp:NativePointer, sz:number){
     console.log(
         hexdump(sp, {
             offset: 0,
@@ -21,8 +21,8 @@ const soname ='libmain.so'
 const lib = libmosebotinfo.load([
     soname,
 ],{
-    _frida_log      : _frida_log_callback,
-    _frida_hexdump  : _frida_hexdump_callback,
+    _frida_log      , 
+    _frida_hexdump  ,
     
 })
 
