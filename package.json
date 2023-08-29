@@ -13,8 +13,7 @@
     "@types/frida-gum": "^17.1.0",
     "@types/node": "^16.4.8",
     "@types/sprintf-js": "^1.1.2",
-    "frida-compile": "^10.0.0",
-    "javascript-obfuscator": "^4.0.0"
+    "frida-compile": "^10.0.0"
   },
   "dependencies": {
   }
