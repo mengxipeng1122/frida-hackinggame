@@ -1,7 +1,7 @@
 
 .exrc
 .venv
-__pycached__
+__pycache__
 .env
 _agent.js
 tt.sh
