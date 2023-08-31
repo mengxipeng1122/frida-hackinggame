@@ -10,4 +10,4 @@ all:./modinfos/libmousebot.ts
 	make -C jni
 
 clean:
-	rm _agent.js ./modinfos/lib*.ts
+	rm -fr _agent.js ./modinfos/lib*.ts libs/ obj/

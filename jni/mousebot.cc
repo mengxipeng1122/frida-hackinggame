@@ -26,54 +26,100 @@ LOG_INFOS_WITH_N(N, "[%s:%d] " fmt , __FILE__, __LINE__,  ##args);
 
 
 
+static const std::type_info& getTypeInfoOfInstance_ndk(void* p)
+{
+    p = *(void**)p;      
+    p = ((void**)p)[-1];  
+    return *(std::type_info*)p;
+}
+
+
+
+static int testContainers()
+{
+    {
+        std::list<void*> v;
+        v.push_back(nullptr);
+        LOG_INFOS(" sizeof std::list<void*> %ld", sizeof(v));
+        LOG_INFOS(" size %ld", v.size());
+        LOG_HEXDUMP(&v, sizeof(v));
+    }
+    {
+        std::vector<void*> v;
+        v.push_back(nullptr);
+        v.push_back(nullptr);
+        LOG_INFOS(" sizeof std::vector<void*> %ld", sizeof(v));
+        LOG_INFOS(" size %ld", v.size());
+        LOG_HEXDUMP(&v, sizeof(v));
+    }
+    {
+        std::set<void*> v;
+        v.insert(nullptr);
+        v.insert(nullptr);
+        v.insert(nullptr);
+        LOG_INFOS(" sizeof std::set<void*> %ld", sizeof(v));
+        LOG_INFOS(" size %ld", v.size());
+        LOG_HEXDUMP(&v, sizeof(v));
+    }
+    {
+        std::map<std::string, void*> v;
+        v["test0"] = nullptr;
+        v["test1"] = nullptr;
+        v["test2"] = nullptr;
+        v["test3"] = nullptr;
+        LOG_INFOS(" sizeof std::map<std::string, void*> %ld", sizeof(v));
+        LOG_INFOS(" size %ld", v.size());
+        LOG_HEXDUMP(&v, sizeof(v));
+    }
+    {
+        std::unordered_map<std::string, void*> v;
+        v["test0"] = nullptr;
+        v["test1"] = nullptr;
+        v["test2"] = nullptr;
+        v["test3"] = nullptr;
+        v["test4"] = nullptr;
+        LOG_INFOS(" sizeof std::unordered_map<std::string, void*> %ld", sizeof(v));
+        LOG_INFOS(" size %ld", v.size());
+        LOG_HEXDUMP(&v, sizeof(v));
+    }
+    
+    return 0;
+}
+
 extern "C" int test(void* base){
 
-    // std::unordered_map<std::string, void*> m;
-
-    // LOG_INFOS(" m %ld", sizeof(m));
-
-
+    // get static VuAssetFactory instance 
     auto* pVuAssetFactory = VuAssetFactory::mpInterface;
     LOG_INFOS(" pVuAssetFactory %p", pVuAssetFactory);
 
-    LOG_HEXDUMP(pVuAssetFactory, 0x190);
+    // get the pointer to VuAssetDB
+    auto*  pVuAssetDB = pVuAssetFactory->_vuAssetDB;
+    LOG_INFOS(" pVuDB %p", pVuAssetDB);
 
-    auto*  vuAssetDB = pVuAssetFactory->_vuAssetDB;
-    LOG_HEXDUMP(vuAssetDB, 0xe0);
-
-
-    return -1;
-
-    auto& assetFactories  = pVuAssetFactory->_assetFactories;
-    LOG_INFOS(" assetFactories %ld", assetFactories.size());
-    for(auto it=assetFactories.begin(); it!=assetFactories.end(); ++it){
-        LOG_INFOS(" %s", it->first.c_str());
+    // list all asset typeNames
+    for( auto it = pVuAssetDB->_assetNames.begin(); it != pVuAssetDB->_assetNames.end(); ++it){
+        auto& assetType = it->first;
+        auto&  names = it->second;
+        for(auto it1=names.begin(); it1!=names.end(); ++it1){
+            LOG_INFOS(" %s : %s", assetType.c_str(), it1->c_str());
+        }
     }
 
-//      auto& _mem = vuAssetDB->_assetInfoHashes;
-//      LOG_INFOS(" member size %ld", _mem.size());
-//      for(auto it=_mem.begin(); it!=_mem.end(); ++it){
-          //  LOG_INFOS(" %p", &(it->first));
-          // LOG_HEXDUMP(&(it->first), 0x30);
-          // LOG_HEXDUMP(&(it->second), 0x30);
-//             LOG_INFOS(" %s", it->first.c_str());
- //     }
+    // iterate though all loaded asset
+    {
+        auto& v = pVuAssetFactory->_loadedAssets;
+        LOG_INFOS(" 0x78 %ld", v.size());
+        LOG_HEXDUMP(&v, 0x30);
+        for(auto it = v.begin(); it != v.end(); ++it){
+            auto* pAsset = it->second;
+            auto& k = it->first;
+            auto& assetTypeInfo = getTypeInfoOfInstance_ndk(pAsset);
+            const char* assetTypeName = assetTypeInfo.name();
+            LOG_INFOS(" %x pAsset %p assetTypeName %s assetName %s", k, pAsset, assetTypeName, pAsset->_name.c_str());
+        }
+    }
 
-
-//     auto& _assetNames = vuAssetDB->_assetNames;
-//     LOG_INFOS(" assets %ld", _assetNames.size());
-// 
-//     for(auto it=_assetNames.begin(); it!=_assetNames.end(); ++it){
-//         LOG_INFOS(" %s", it->first.c_str());
-//         auto& p = it->second;
-//         LOG_INFOS(" p %ld" , p.size());
-//         for(auto it1=p.begin(); it1!=p.end(); ++it1){
-//             LOG_INFOS(" %s", it1->c_str());
-//         }
-//     }
-// 
-
-    
+    LOG_INFOS(" test end");
 
     return 0; 
 }
